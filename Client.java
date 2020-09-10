@@ -15,8 +15,9 @@ public class Client {
     private static BufferedWriter out; // поток записи в сокет
     private static String name;
     private static Boolean work = true;
+    private static Thread w, r;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         try {
             try {
                 sc = new Scanner(System.in);
@@ -33,7 +34,7 @@ public class Client {
                 sendMessage(new Message("init", name, "@", "hello world"));
 
 
-                Thread r = new Thread(){
+                r = new Thread(){
                     private Message msg = new Message();
         
                     public void run(){
@@ -44,7 +45,7 @@ public class Client {
                     }
                 };r.start();
 
-                Thread w = new Thread(){
+                w = new Thread(){
                     private Message msg = new Message();
         
                     public void run(){
@@ -79,10 +80,13 @@ public class Client {
                         printMessage(msg);
                     }
                 };w.start();
-
+                w.join();
+                r.interrupt();
 
             } finally { // в любом случае необходимо закрыть сокет и потоки
                 System.out.println("client close...");
+                w.interrupt();
+                r.interrupt();
                 clientSocket.close();
                 in.close();
                 out.close();
@@ -94,7 +98,13 @@ public class Client {
     }
 
     public static void printMessage(Message msg) {
-        
+        if(msg.cmd.equals("info")){
+            System.out.println("["+msg.from+"]: "+msg.text);
+        }
+        if(msg.to.equals("@")){
+            System.out.println("("+msg.from+"): "+msg.text);
+        }
+        System.out.println("{"+msg.from+" for "+ msg.to +"}(DM): " + msg.text);
     }
     public static void sendMessage(Message msg) throws IOException {
         out.write(msg.toString()); // отправляем сообщение на сервер

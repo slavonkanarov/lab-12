@@ -34,17 +34,14 @@ class Server{
                     if(msg.cmd.equals("stop")) {
                         if(!init)continue;
                         init = false;
-                        System.out.println("@" + name + " disconnected");
                         msgSender(new Message("info", "server", "@", "@" + name + " disconnected"));
                         this.interrupt();
                     } else if (msg.cmd.equals("init")) {
                         if (init) {
-                            System.out.println("@" + name + " disconnected");
                             msgSender(new Message("info", "server", "@", "@" + name + " disconnected"));
                         }
                         init = true;
                         name = msg.from;
-                        System.out.println("@" + name + " connected");
                         msgSender(new Message("info", "server", "@", "@" + name + " connected"));
                     } else if (msg.cmd.equals("msg")) {
                         msgSender(msg);
@@ -79,6 +76,7 @@ class Server{
     }
 
     public static void msgSender(Message msg) {
+        System.out.println(msg.toString());
         for (ServerClient vr : serverList) {
             if(!msg.to.equals("@")&&!msg.to.equals(vr.name))continue;
             if(!vr.init)continue;
