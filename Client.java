@@ -38,10 +38,12 @@ public class Client {
                     private Message msg = new Message();
         
                     public void run(){
-                        try {
-                            msg.parseMessage(in.readLine());
-                        } catch (IOException ignore) {}
-                        printMessage(msg);
+                        while(work){
+                            try {
+                                msg.parseMessage(in.readLine());
+                            } catch (IOException ignore) {}
+                            printMessage(msg);
+                        }
                     }
                 };r.start();
 
@@ -100,11 +102,12 @@ public class Client {
     public static void printMessage(Message msg) {
         if(msg.cmd.equals("info")){
             System.out.println("["+msg.from+"]: "+msg.text);
-        }
+        }else
         if(msg.to.equals("@")){
             System.out.println("("+msg.from+"): "+msg.text);
+        }else{
+            System.out.println("{"+msg.from+" for "+ msg.to +"}(DM): " + msg.text);
         }
-        System.out.println("{"+msg.from+" for "+ msg.to +"}(DM): " + msg.text);
     }
     public static void sendMessage(Message msg) throws IOException {
         out.write(msg.toString()); // отправляем сообщение на сервер
