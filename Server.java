@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.util.LinkedList;
 
 
-
 class Server{
 
 
@@ -30,6 +29,7 @@ class Server{
         public void run() {
             try {
                 while (true) {
+                    
                     Message msg = new Message(in.readLine());
                     if(msg.cmd.equals("stop")) {
                         if(!init)continue;
